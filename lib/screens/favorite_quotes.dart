@@ -32,13 +32,13 @@ class FavoriteQuotesScreen extends StatelessWidget {
         flexibleSpace: Platform.isIOS
             ? null
             : Container(
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/background.png'),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/background.png'),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -55,7 +55,9 @@ class FavoriteQuotesScreen extends StatelessWidget {
               quote: quote.content,
               author: quote.author,
               isFavorite: quote.isFavorite,
+              isRead: quote.isRead,
               onFavoriteToggle: () {},
+              onReadToggle: () {},
             );
           },
         ),

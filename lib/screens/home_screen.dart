@@ -15,36 +15,43 @@ class _HomeScreenState extends State<HomeScreen> {
   Quote? _quote;
   final List<Quote> _favoriteQuotes = [];
   String? _selectedCategory;
-  final List<String> _categories = ['inspire', 'love', 'life', 'humor'];
+  final List<String> _categories = ['inspire', 'love', 'life', 'humor', 'wisdom', 'friendship', 'success'];
   List<Quote> _searchResults = [];
   bool _isSearching = false;
+  String? _errorMessage;
 
   Future<void> _getNewQuote() async {
-    print('Fetching new quote...');
+    setState(() {
+      _errorMessage = null;
+    });
     try {
       final Quote quote = await QuoteService.fetchRandomQuote(
         category: _selectedCategory,
       );
-      print('Quote fetched: $quote');
       setState(() {
         _quote = quote;
       });
     } catch (e) {
-      print('Failed to fetch quote: $e');
+      setState(() {
+        _errorMessage = 'Failed to fetch quote. Please try again.';
+      });
     }
   }
 
   Future<void> _searchQuotes(String query) async {
-    print('Searching quotes...');
+    setState(() {
+      _errorMessage = null;
+    });
     try {
       final List<Quote> quotes = await QuoteService.searchQuotes(query);
-      print('Quotes found: $quotes');
       setState(() {
         _searchResults = quotes;
         _isSearching = true;
       });
     } catch (e) {
-      print('Failed to search quotes: $e');
+      setState(() {
+        _errorMessage = 'Failed to search quotes. Please try again.';
+      });
     }
   }
 
@@ -56,6 +63,12 @@ class _HomeScreenState extends State<HomeScreen> {
       } else {
         _favoriteQuotes.removeWhere((q) => q.content == quote.content);
       }
+    });
+  }
+
+  void _toggleRead(Quote quote) {
+    setState(() {
+      quote.isRead = !quote.isRead;
     });
   }
 
@@ -76,9 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder:
-                      (context) =>
-                          FavoriteQuotesScreen(favoriteQuotes: _favoriteQuotes),
+                  builder: (context) => FavoriteQuotesScreen(favoriteQuotes: _favoriteQuotes),
                 ),
               );
             },
@@ -120,19 +131,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       'Select Category',
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
-                    items:
-                        _categories.map((String category) {
-                          return DropdownMenuItem<String>(
-                            value: category,
-                            child: Text(
-                              category,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                              ),
-                            ),
-                          );
-                        }).toList(),
+                    items: _categories.map((String category) {
+                      return DropdownMenuItem<String>(
+                        value: category,
+                        child: Text(
+                          category,
+                          style: const TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                      );
+                    }).toList(),
                     onChanged: (String? newValue) {
                       setState(() {
                         _selectedCategory = newValue;
@@ -145,61 +152,58 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Expanded(
               child: Center(
-                child: AnimatedSwitcher(
-                  duration: const Duration(seconds: 1),
-                  transitionBuilder: (
-                    Widget child,
-                    Animation<double> animation,
-                  ) {
-                    return SlideTransition(
-                      position: Tween<Offset>(
-                        begin: const Offset(0, 1),
-                        end: Offset.zero,
-                      ).animate(animation),
-                      child: ScaleTransition(
-                        scale: animation,
-                        child: FadeTransition(opacity: animation, child: child),
-                      ),
+                child: _errorMessage != null
+                    ? Text(
+                  _errorMessage!,
+                  style: const TextStyle(color: Colors.red, fontSize: 18),
+                )
+                    : _isSearching
+                    ? ListView.builder(
+                  itemCount: _searchResults.length,
+                  itemBuilder: (context, index) {
+                    final quote = _searchResults[index];
+                    return QuoteCard(
+                      key: ValueKey<String>(quote.content),
+                      quote: quote.content,
+                      author: quote.author,
+                      isFavorite: quote.isFavorite,
+                      isRead: quote.isRead,
+                      onFavoriteToggle: () => _toggleFavorite(quote),
+                      onReadToggle: () => _toggleRead(quote),
                     );
                   },
-                  child:
-                      _isSearching
-                          ? ListView.builder(
-                            itemCount: _searchResults.length,
-                            itemBuilder: (context, index) {
-                              final quote = _searchResults[index];
-                              return QuoteCard(
-                                key: ValueKey<String>(quote.content),
-                                quote: quote.content,
-                                author: quote.author,
-                                isFavorite: quote.isFavorite,
-                                onFavoriteToggle: () => _toggleFavorite(quote),
-                              );
-                            },
-                          )
-                          : _quote != null
-                          ? QuoteCard(
-                            key: ValueKey<String>(_quote!.content),
-                            quote: _quote!.content,
-                            author: _quote!.author,
-                            isFavorite: _quote!.isFavorite,
-                            onFavoriteToggle: () => _toggleFavorite(_quote!),
-                          )
-                          : const Text(
-                            'Click the button to get a new quote!',
-                            style: TextStyle(fontSize: 22),
-                          ),
+                )
+                    : _quote != null
+                    ? FadeTransition(
+                  opacity: AlwaysStoppedAnimation(1.0),
+                  child: QuoteCard(
+                    key: ValueKey<String>(_quote!.content),
+                    quote: _quote!.content,
+                    author: _quote!.author,
+                    isFavorite: _quote!.isFavorite,
+                    isRead: _quote!.isRead,
+                    onFavoriteToggle: () => _toggleFavorite(_quote!),
+                    onReadToggle: () => _toggleRead(_quote!),
+                  ),
+                )
+                    : const Text(
+                  'Click the button to get a new quote!',
+                  style: TextStyle(fontSize: 22),
                 ),
               ),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _getNewQuote,
-        tooltip: 'New Quote',
-        backgroundColor: Colors.blueAccent,
-        child: const Icon(Icons.refresh, color: Colors.white),
+      floatingActionButton: SizedBox(
+        width: 100,
+        height: 60,
+        child: FloatingActionButton(
+          onPressed: _getNewQuote,
+          tooltip: 'New Quote',
+          backgroundColor: Color.fromRGBO(95, 124, 138, 1.0),
+          child: const Icon(Icons.refresh, color: Colors.white, size: 36),
+        ),
       ),
     );
   }

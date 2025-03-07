@@ -3,12 +3,14 @@ class Quote {
   final String author;
   final String category;
   bool isFavorite;
+  bool isRead;
 
   Quote({
     required this.content,
     required this.author,
     required this.category,
     this.isFavorite = false,
+    this.isRead = false,
   });
 
   factory Quote.fromJson(Map<String, dynamic> json) {

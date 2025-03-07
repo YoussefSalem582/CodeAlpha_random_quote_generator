@@ -5,14 +5,18 @@ class QuoteCard extends StatelessWidget {
   final String quote;
   final String author;
   final bool isFavorite;
+  final bool isRead;
   final VoidCallback onFavoriteToggle;
+  final VoidCallback onReadToggle;
 
   const QuoteCard({
     super.key,
     required this.quote,
     required this.author,
     required this.isFavorite,
+    required this.isRead,
     required this.onFavoriteToggle,
+    required this.onReadToggle,
   });
 
   @override
@@ -28,8 +32,7 @@ class QuoteCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15.0),
           gradient: LinearGradient(
-            colors: [Color.fromRGBO(142, 142, 142, 1.0), Color.fromRGBO(
-                1, 174, 185, 1.0)],
+            colors: [Color.fromRGBO(142, 142, 142, 1.0), Color.fromRGBO(1, 174, 185, 1.0)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -94,6 +97,13 @@ class QuoteCard extends StatelessWidget {
                     color: isFavorite ? Colors.red : Colors.white,
                   ),
                   onPressed: onFavoriteToggle,
+                ),
+                IconButton(
+                  icon: Icon(
+                    isRead ? Icons.check_box : Icons.check_box_outline_blank,
+                    color: isRead ? Colors.green : Colors.white,
+                  ),
+                  onPressed: onReadToggle,
                 ),
               ],
             ),
