@@ -11,6 +11,10 @@ class QuoteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.all(16.0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      elevation: 5,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -18,13 +22,21 @@ class QuoteCard extends StatelessWidget {
           children: <Widget>[
             Text(
               quote,
-              //style: Theme.of(context).textTheme.headline6,
+              style: const TextStyle(
+                fontSize: 24,
+                fontStyle: FontStyle.italic,
+                color: Colors.black87,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
             Text(
               '- $author',
-              //style: Theme.of(context).textTheme.subtitle1,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black54,
+              ),
               textAlign: TextAlign.right,
             ),
             const SizedBox(height: 10),
@@ -32,8 +44,11 @@ class QuoteCard extends StatelessWidget {
               onPressed: () {
                 Share.share('$quote - $author');
               },
-              icon: const Icon(Icons.share),
-              label: const Text('Share'),
+              icon: const Icon(Icons.share, color: Colors.white),
+              label: const Text('Share', style: TextStyle(color: Colors.white)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+              ),
             ),
           ],
         ),

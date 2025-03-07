@@ -11,10 +11,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Random Quote Generator',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      color: Colors.white,
+      theme: ThemeData(primarySwatch: Colors.green),
       home: const HomeScreen(),
     );
   }
