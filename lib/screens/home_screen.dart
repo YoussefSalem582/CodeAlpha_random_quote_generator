@@ -14,11 +14,17 @@ class _HomeScreenState extends State<HomeScreen> {
   String _author = '';
 
   void _getNewQuote() async {
-    final quote = await QuoteService.fetchRandomQuote();
-    setState(() {
-      _quote = quote['content'];
-      _author = quote['author'];
-    });
+    print('Fetching new quote...');
+    try {
+      final quote = await QuoteService.fetchRandomQuote();
+      print('Quote fetched: $quote');
+      setState(() {
+        _quote = quote['content'];
+        _author = quote['author'];
+      });
+    } catch (e) {
+      print('Failed to fetch quote: $e');
+    }
   }
 
   @override
