@@ -4,8 +4,16 @@ import 'package:share_plus/share_plus.dart';
 class QuoteCard extends StatelessWidget {
   final String quote;
   final String author;
+  final bool isFavorite;
+  final VoidCallback onFavoriteToggle;
 
-  const QuoteCard({super.key, required this.quote, required this.author});
+  const QuoteCard({
+    super.key,
+    required this.quote,
+    required this.author,
+    required this.isFavorite,
+    required this.onFavoriteToggle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,15 +48,27 @@ class QuoteCard extends StatelessWidget {
               textAlign: TextAlign.right,
             ),
             const SizedBox(height: 10),
-            ElevatedButton.icon(
-              onPressed: () {
-                Share.share('$quote - $author');
-              },
-              icon: const Icon(Icons.share, color: Colors.white),
-              label: const Text('Share', style: TextStyle(color: Colors.white)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Share.share('$quote - $author');
+                  },
+                  icon: const Icon(Icons.share, color: Colors.white),
+                  label: const Text('Share', style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: isFavorite ? Colors.red : Colors.grey,
+                  ),
+                  onPressed: onFavoriteToggle,
+                ),
+              ],
             ),
           ],
         ),
