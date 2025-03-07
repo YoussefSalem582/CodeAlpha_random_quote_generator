@@ -16,6 +16,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Quote> _favoriteQuotes = [];
   String? _selectedCategory;
   final List<String> _categories = ['inspire', 'love', 'life', 'humor'];
+  List<Quote> _searchResults = [];
+  bool _isSearching = false;
 
   Future<void> _getNewQuote() async {
     print('Fetching new quote...');
@@ -32,17 +34,27 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _toggleFavorite() {
+  Future<void> _searchQuotes(String query) async {
+    print('Searching quotes...');
+    try {
+      final List<Quote> quotes = await QuoteService.searchQuotes(query);
+      print('Quotes found: $quotes');
+      setState(() {
+        _searchResults = quotes;
+        _isSearching = true;
+      });
+    } catch (e) {
+      print('Failed to search quotes: $e');
+    }
+  }
+
+  void _toggleFavorite(Quote quote) {
     setState(() {
-      if (_quote != null) {
-        _quote!.isFavorite = !_quote!.isFavorite;
-        if (_quote!.isFavorite) {
-          _favoriteQuotes.add(_quote!);
-        } else {
-          _favoriteQuotes.removeWhere(
-            (quote) => quote.content == _quote!.content,
-          );
-        }
+      quote.isFavorite = !quote.isFavorite;
+      if (quote.isFavorite) {
+        _favoriteQuotes.add(quote);
+      } else {
+        _favoriteQuotes.removeWhere((q) => q.content == quote.content);
       }
     });
   }
@@ -84,33 +96,51 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.all(14.0),
-              child: DropdownButton<String>(
-                value: _selectedCategory,
-                hint: const Text(
-                  'Select Category',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
-                ),
-                items: _categories.map((String category) {
-                  return DropdownMenuItem<String>(
-                    value: category,
-                    child: Text(
-                      category,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
+              child: Column(
+                children: [
+                  TextField(
+                    style: const TextStyle(color: Colors.white),
+                    decoration: const InputDecoration(
+                      hintText: 'Search Quotes',
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(Icons.search, color: Colors.white),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
                       ),
                     ),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedCategory = newValue;
-                  });
-                },
-                dropdownColor: Colors.grey[900],
+                    onSubmitted: (query) {
+                      _searchQuotes(query);
+                    },
+                  ),
+                  const SizedBox(height: 14),
+                  DropdownButton<String>(
+                    value: _selectedCategory,
+                    hint: const Text(
+                      'Select Category',
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    items:
+                        _categories.map((String category) {
+                          return DropdownMenuItem<String>(
+                            value: category,
+                            child: Text(
+                              category,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedCategory = newValue;
+                      });
+                    },
+                    dropdownColor: Colors.grey[900],
+                  ),
+                ],
               ),
             ),
             Expanded(
@@ -133,13 +163,27 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                   child:
-                      _quote != null
+                      _isSearching
+                          ? ListView.builder(
+                            itemCount: _searchResults.length,
+                            itemBuilder: (context, index) {
+                              final quote = _searchResults[index];
+                              return QuoteCard(
+                                key: ValueKey<String>(quote.content),
+                                quote: quote.content,
+                                author: quote.author,
+                                isFavorite: quote.isFavorite,
+                                onFavoriteToggle: () => _toggleFavorite(quote),
+                              );
+                            },
+                          )
+                          : _quote != null
                           ? QuoteCard(
                             key: ValueKey<String>(_quote!.content),
                             quote: _quote!.content,
                             author: _quote!.author,
                             isFavorite: _quote!.isFavorite,
-                            onFavoriteToggle: _toggleFavorite,
+                            onFavoriteToggle: () => _toggleFavorite(_quote!),
                           )
                           : const Text(
                             'Click the button to get a new quote!',
