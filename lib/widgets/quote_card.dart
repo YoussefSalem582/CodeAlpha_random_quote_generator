@@ -22,7 +22,7 @@ class QuoteCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(16.0),
+      margin: const EdgeInsets.all(20.0),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
       ),
@@ -37,7 +37,7 @@ class QuoteCard extends StatelessWidget {
             end: Alignment.bottomRight,
           ),
         ),
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -47,34 +47,36 @@ class QuoteCard extends StatelessWidget {
                 fontSize: 24,
                 fontStyle: FontStyle.italic,
                 color: Colors.white,
+                fontFamily: 'SofadiOne',
                 shadows: [
                   Shadow(
                     blurRadius: 10.0,
                     color: Colors.black45,
-                    offset: Offset(2.0, 2.0),
+                    offset: Offset(2.0, 1.0),
                   ),
                 ],
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 34),
             Text(
               '- $author',
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
+                fontFamily: 'Ex01',
                 shadows: [
                   Shadow(
                     blurRadius: 10.0,
                     color: Colors.black45,
-                    offset: Offset(2.0, 2.0),
+                    offset: Offset(2.0, 1.0),
                   ),
                 ],
               ),
               textAlign: TextAlign.right,
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

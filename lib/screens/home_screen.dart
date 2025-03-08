@@ -15,7 +15,15 @@ class _HomeScreenState extends State<HomeScreen> {
   Quote? _quote;
   final List<Quote> _favoriteQuotes = [];
   String? _selectedCategory;
-  final List<String> _categories = ['inspire', 'love', 'life', 'humor', 'wisdom', 'friendship', 'success'];
+  final List<String> _categories = [
+    'inspire',
+    'love',
+    'life',
+    'humor',
+    'wisdom',
+    'friendship',
+    'success',
+  ];
   List<Quote> _searchResults = [];
   bool _isSearching = false;
   String? _errorMessage;
@@ -77,8 +85,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Random Quote Generator',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          'QuoteHub',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,
+          fontFamily: 'SofadiOne',),
+
         ),
         centerTitle: true,
         backgroundColor: Color.fromRGBO(1, 174, 185, 1.0),
@@ -89,7 +99,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => FavoriteQuotesScreen(favoriteQuotes: _favoriteQuotes),
+                  builder:
+                      (context) =>
+                          FavoriteQuotesScreen(favoriteQuotes: _favoriteQuotes),
                 ),
               );
             },
@@ -129,17 +141,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     value: _selectedCategory,
                     hint: const Text(
                       'Select Category',
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      style: TextStyle(color: Colors.white, fontSize: 20,
+                      fontFamily: 'SofadiOne',),
                     ),
-                    items: _categories.map((String category) {
-                      return DropdownMenuItem<String>(
-                        value: category,
-                        child: Text(
-                          category,
-                          style: const TextStyle(color: Colors.white, fontSize: 18),
-                        ),
-                      );
-                    }).toList(),
+                    items:
+                        _categories.map((String category) {
+                          return DropdownMenuItem<String>(
+                            value: category,
+                            child: Text(
+                              category,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                              ),
+                            ),
+                          );
+                        }).toList(),
                     onChanged: (String? newValue) {
                       setState(() {
                         _selectedCategory = newValue;
@@ -150,45 +167,52 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            Expanded(
-              child: Center(
-                child: _errorMessage != null
-                    ? Text(
-                  _errorMessage!,
-                  style: const TextStyle(color: Colors.red, fontSize: 18),
-                )
-                    : _isSearching
-                    ? ListView.builder(
-                  itemCount: _searchResults.length,
-                  itemBuilder: (context, index) {
-                    final quote = _searchResults[index];
-                    return QuoteCard(
-                      key: ValueKey<String>(quote.content),
-                      quote: quote.content,
-                      author: quote.author,
-                      isFavorite: quote.isFavorite,
-                      isRead: quote.isRead,
-                      onFavoriteToggle: () => _toggleFavorite(quote),
-                      onReadToggle: () => _toggleRead(quote),
-                    );
-                  },
-                )
-                    : _quote != null
-                    ? FadeTransition(
-                  opacity: AlwaysStoppedAnimation(1.0),
-                  child: QuoteCard(
-                    key: ValueKey<String>(_quote!.content),
-                    quote: _quote!.content,
-                    author: _quote!.author,
-                    isFavorite: _quote!.isFavorite,
-                    isRead: _quote!.isRead,
-                    onFavoriteToggle: () => _toggleFavorite(_quote!),
-                    onReadToggle: () => _toggleRead(_quote!),
-                  ),
-                )
-                    : const Text(
-                  'Click the button to get a new quote!',
-                  style: TextStyle(fontSize: 22),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.6,
+              child: Expanded(
+                child: Center(
+                  child:
+                      _errorMessage != null
+                          ? Text(
+                            _errorMessage!,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 18,
+                            ),
+                          )
+                          : _isSearching
+                          ? ListView.builder(
+                            itemCount: _searchResults.length,
+                            itemBuilder: (context, index) {
+                              final quote = _searchResults[index];
+                              return QuoteCard(
+                                key: ValueKey<String>(quote.content),
+                                quote: quote.content,
+                                author: quote.author,
+                                isFavorite: quote.isFavorite,
+                                isRead: quote.isRead,
+                                onFavoriteToggle: () => _toggleFavorite(quote),
+                                onReadToggle: () => _toggleRead(quote),
+                              );
+                            },
+                          )
+                          : _quote != null
+                          ? FadeTransition(
+                            opacity: AlwaysStoppedAnimation(1.0),
+                            child: QuoteCard(
+                              key: ValueKey<String>(_quote!.content),
+                              quote: _quote!.content,
+                              author: _quote!.author,
+                              isFavorite: _quote!.isFavorite,
+                              isRead: _quote!.isRead,
+                              onFavoriteToggle: () => _toggleFavorite(_quote!),
+                              onReadToggle: () => _toggleRead(_quote!),
+                            ),
+                          )
+                          : const Text(
+                            'Click the button to get a new quote!',
+                            style: TextStyle(fontSize: 22),
+                          ),
                 ),
               ),
             ),
