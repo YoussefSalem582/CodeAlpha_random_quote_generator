@@ -26,7 +26,9 @@ class FavoriteQuotesScreen extends StatelessWidget {
         ),
         title: const Text(
           'Favorite Quotes',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontFamily: 'SofadiOne',),
         ),
         backgroundColor: const Color.fromRGBO(1, 174, 185, 1.0),
         flexibleSpace: Platform.isIOS
